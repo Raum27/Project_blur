@@ -8,9 +8,9 @@ import time
 import os
 def Process_prediction(file_img):
     model ,weights = Model_pretrain()
-    img = Image.fromarray(cv2.cvtColor(cv2.resize(cv2.imread(file_img),(512,512)), cv2.COLOR_BGR2RGB))
+    # img = Image.fromarray(cv2.cvtColor(cv2.resize(cv2.imread(file_img),(512,512)), cv2.COLOR_BGR2RGB))
 
-    # img = Image.fromarray(file_img) # case for process already
+    img = Image.fromarray(file_img) # case for process already
     # img = read_image(file_img)
 
     preprocess = weights.transforms()
