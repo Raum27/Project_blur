@@ -1,22 +1,23 @@
 import cv2
 
+input_image_path = r'C:\Users\Raum\Desktop\jec\code\dataface\superman4.jpg'
+output_image_path = "censored_image.jpg"
+image = cv2.imread(input_image_path)
 
-image_path = r"C:\Users\Raum\Desktop\jec\code\dataface\superman4.jpg"
-image = cv2.resize(cv2.imread(image_path),(720,720))
+censor_region = (100, 200, 300, 400)
 
-start_x, start_y, end_x, end_y = 100, 150, 300, 300  # Adjust these values
-censored = image.copy()
-cv2.rectangle(censored, (start_x, start_y), (end_x, end_y), (255, 255, 255), -1)  # Draw a black rectangle
+censored_area = image[censor_region[1]:censor_region[3], censor_region[0]:censor_region[2]]
 
-censored = image.copy()
-region = censored[start_y:end_y, start_x:end_x]
-print(region.shape)
-factor = 10  # Adjust the pixelation factor
-
-small = cv2.resize(region, (region.shape[1] // factor, region.shape[0] // factor))
-censored[start_y:end_y, start_x:end_x] = cv2.resize(small, (region.shape[1], region.shape[0]), interpolation=cv2.INTER_NEAREST)
+censored_width, censored_height = censored_area.shape[1], censored_area.shape[0]
 
 
-cv2.imshow('Censored Image', censored)
+pixel_size = 12
+censored_area = cv2.resize(censored_area, (censored_width // pixel_size, censored_height // pixel_size))
+censored_area = cv2.resize(censored_area, (censored_width, censored_height), interpolation=cv2.INTER_NEAREST)
+
+image[censor_region[1]:censor_region[3], censor_region[0]:censor_region[2]] = censored_area
+
+
+cv2.imshow('Censored Image', image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
