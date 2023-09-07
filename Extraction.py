@@ -28,13 +28,18 @@ def visual_multi(path_file):
   plt.show()
 
 
-def extraction_keras_all_pillow(file_name,show=None): # take embeddings, and position
+def extraction_keras_all_images(file_name,show=None): # take embeddings, and position
   position_crop = []
   embedding_faces = []
   position = []
   image = Image.open(file_name).convert('RGB')
   im_arr = np.array(image)
   faces = detector.detect_faces(im_arr,)
+  '''for delete file in image_lock'''
+  if os.listdir(r'C:\Users\Raum\Desktop\jec\code\image_lock\\') !=[]:
+    for i in os.listdir(r'C:\Users\Raum\Desktop\jec\code\image_lock\\'):
+      file_image = os.path.join(r'C:\Users\Raum\Desktop\jec\code\image_lock\\',i)
+      os.remove(file_image)
 
   for i in faces:
     x1,y1,width,height = i['box']
@@ -57,11 +62,9 @@ def extraction_keras_all_pillow(file_name,show=None): # take embeddings, and pos
     if show:
       image_face.show()
   visual_multi(r'C:\Users\Raum\Desktop\jec\code\image_lock\\')
-  
-
   return embedding_faces,position
 
-def extraction_keras_all_cv2(im_arr):
+def extraction_keras_all_video(im_arr):
     position_crop = []
     embedding_faces = []
     position = []

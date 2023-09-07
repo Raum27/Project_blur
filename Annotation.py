@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 
 
-def annotation_box_pillow(file_image,lock_face,embedding_faces,position,file_filter=None):
+def annotation_box_images(file_image,embedding_faces,position,lock_face=None,file_filter=None):
   log_cosine_similarity = []
   image = Image.open(file_image).convert('RGB')
   if file_filter is None:
@@ -16,13 +16,15 @@ def annotation_box_pillow(file_image,lock_face,embedding_faces,position,file_fil
 
 
   Detection_check = np.zeros((len(position)))
-  for j in range(len(lock_face)):
-    for i in range(len(position)):
-          similar = cosine_similarity(embedding_faces[lock_face[j]], embedding_faces[i])
-          log_cosine_similarity.append(similar)
-          if similar>0.9 and Detection_check[i] ==0 :
-            Detection_check[i] = 1
-            break
+  if lock_face : 
+    '''if want to blur >=2 in images'''
+    for j in range(len(lock_face)):
+      for i in range(len(position)):
+            similar = cosine_similarity(embedding_faces[lock_face[j]], embedding_faces[i])
+            log_cosine_similarity.append(similar)
+            if similar>0.9 and Detection_check[i] ==0 :
+              Detection_check[i] = 1
+              break
 
 
   for i in range(len(position)):
@@ -36,12 +38,10 @@ def annotation_box_pillow(file_image,lock_face,embedding_faces,position,file_fil
         if file_filter is None:
           censor_region = (position[i][0],position[i][1], position[i][2],position[i][3])  # Format: (left, top, right, bottom)
           censored_area = image.crop(censor_region)
-
-
+          
           censored_width, censored_height = censored_area.size
-          pixel_size = 10 
           censored_area = censored_area.resize(
-              (censored_width // pixel_size, censored_height // pixel_size),
+              (6, 6),
               Image.NEAREST
           ).resize(
               (censored_width, censored_height),
@@ -55,8 +55,9 @@ def annotation_box_pillow(file_image,lock_face,embedding_faces,position,file_fil
       
         
   return image,log_cosine_similarity
+      
 
-def annotation_box_cv2(file_image,lock_face,embedding_faces,position,file_filter=None):
+def annotation_box_video(file_image,lock_face,embedding_faces,position,file_filter=None):
     log_cosine_similarity = []
     Detection_check = np.zeros((len(position)))
     for j in range(len(lock_face)):
@@ -64,7 +65,7 @@ def annotation_box_cv2(file_image,lock_face,embedding_faces,position,file_filter
         for i in range(len(position)):
             similar = cosine_similarity(lock_face[j], embedding_faces[i])
             log_cosine_similarity.append(similar)
-            if similar>0.55 and Detection_check[i] ==0 :
+            if similar>0.25 and Detection_check[i] ==0 :
                 Detection_check[i] = 1
                 break
 
